@@ -1,7 +1,11 @@
 import React from "react";
 
 // initialize context and use placeholders for methods
-const ToastContext = React.createContext({ toasts: [], add() {}, remove() {} });
+const ToastContext = React.createContext({
+  toasts: [],
+  add() {},
+  remove() {},
+});
 
 function ToastProvider({ children }) {
   // the list of toasts
@@ -22,6 +26,22 @@ function ToastProvider({ children }) {
     },
     [toasts]
   );
+
+  React.useEffect(() => {
+    function handleEscapePress(event) {
+      if (event.code !== "Escape") {
+        return;
+      }
+
+      setToasts([]);
+    }
+
+    window.addEventListener("keyup", handleEscapePress);
+
+    return () => {
+      window.removeEventListener("keyup", handleEscapePress);
+    };
+  }, []);
 
   return (
     <ToastContext value={{ toasts, add, remove }}>{children}</ToastContext>
